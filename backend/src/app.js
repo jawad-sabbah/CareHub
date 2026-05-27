@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import pool from './config/db.js';
 
 import  authRoute from '../src/modules/auth/authRoute.js';
-
+import dashboardRoute from '../src/modules/dashboard/dashboardRoute.js';
 
 
 dotenv.config();
@@ -14,6 +14,7 @@ const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use('/api/auth',authRoute);
+app.use('/api/dashboard',dashboardRoute);
 
 
 async function start() {
