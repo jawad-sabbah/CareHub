@@ -4,6 +4,11 @@ import {authMiddleware} from "../../middleware/auth.middleware.js";
 
 const router=express.Router();
 
-router.get('/insurance-details',authMiddleware,dashboardController.getInsurancePoliciesByUserId);
+router.get(
+  "/",
+  authMiddleware,
+  dashboardController.getDashboard
+);
+
 
 export default router;
