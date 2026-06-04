@@ -4,7 +4,6 @@ import pool from './config/db.js';
 
 import  authRoute from '../src/modules/auth/authRoute.js';
 import dashboardRoute from '../src/modules/dashboard/dashboardRoute.js';
-import qrCodeRouter from '../src/modules/qrCode/qrCodeRoute.js';
 
 dotenv.config();
 
@@ -15,7 +14,6 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use('/api/auth',authRoute);
 app.use('/api/dashboard',dashboardRoute);
-app.use('/api/qr-code',qrCodeRouter);
 
 async function start() {
     try {
