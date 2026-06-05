@@ -1,0 +1,49 @@
+import familyService from "./familyService.js";
+
+class FamilyController {
+  
+  async getFamilyMembers(req, res) {
+  try {
+    const userId = req.user.id;
+
+    const familyData =
+      await familyService.getFamilyMembersByUserId(userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Family members fetched successfully",
+      data: familyData,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
+  async deleteFamilyMember(req, res) {
+  try {
+    const userId = req.user.id;
+    const memberId = req.params.id;
+
+    const result =
+      await familyService.deleteFamilyMember(memberId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Family member deleted successfully",
+      data: result,
+    });
+
+  } catch (error) {
+    return res.status(404).json({
+      success: false,
+      message: error.message || "Failed to delete family member",
+    });
+  }
+}
+}
+
+export default new FamilyController();
