@@ -6,6 +6,8 @@ import  authRoute from '../src/modules/auth/authRoute.js';
 import dashboardRoute from '../src/modules/dashboard/dashboardRoute.js';
 import familyRoute from '../src/modules/family/familyRoute.js';
 import medicalCenterRoute from "../src/modules/medicalCenters/medicalCenterRoute.js";
+import contactRoute from '../src/modules/contact/contactRoute.js';
+
 dotenv.config();
 
 const app = express();
@@ -17,6 +19,7 @@ app.use('/api/auth',authRoute);
 app.use('/api/dashboard',dashboardRoute);
 app.use('/api/family',familyRoute);
 app.use('/api/medical-centers',medicalCenterRoute);
+app.use('/api/contact-us',contactRoute);
 
 async function start() {
     try {
