@@ -7,6 +7,7 @@ import dashboardRoute from '../src/modules/dashboard/dashboardRoute.js';
 import familyRoute from '../src/modules/family/familyRoute.js';
 import medicalCenterRoute from "../src/modules/medicalCenters/medicalCenterRoute.js";
 import contactRoute from '../src/modules/contact/contactRoute.js';
+import insuranceHistoryRoute from '../src/modules/insurance_history/insurance_history_Route.js';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use('/api/dashboard',dashboardRoute);
 app.use('/api/family',familyRoute);
 app.use('/api/medical-centers',medicalCenterRoute);
 app.use('/api/contact-us',contactRoute);
+app.use('/api/insurance-history',insuranceHistoryRoute);
 
 async function start() {
     try {
