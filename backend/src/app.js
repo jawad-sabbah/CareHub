@@ -5,7 +5,7 @@ import pool from './config/db.js';
 import  authRoute from '../src/modules/auth/authRoute.js';
 import dashboardRoute from '../src/modules/dashboard/dashboardRoute.js';
 import familyRoute from '../src/modules/family/familyRoute.js';
-
+import medicalCenterRoute from "../src/modules/medicalCenters/medicalCenterRoute.js";
 dotenv.config();
 
 const app = express();
@@ -16,6 +16,7 @@ app.use(express.json());
 app.use('/api/auth',authRoute);
 app.use('/api/dashboard',dashboardRoute);
 app.use('/api/family',familyRoute);
+app.use('/api/medical-centers',medicalCenterRoute);
 
 async function start() {
     try {
