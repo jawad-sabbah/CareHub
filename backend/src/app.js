@@ -10,6 +10,7 @@ import contactRoute from '../src/modules/contact/contactRoute.js';
 import insuranceHistoryRoute from '../src/modules/insurance_history/insurance_history_Route.js';
 import medicalRecordRoute from '../src/modules/medicalRecords/medicalRecordRoute.js';
 import profileRoute from '../src/modules/profile/profileRoute.js'
+import insuranceDetailsRoute from '../src/modules/insurance_details/insurance_details_Route.js'
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/api/contact-us',contactRoute);
 app.use('/api/insurance-history',insuranceHistoryRoute);
 app.use('/api/medical-records',medicalRecordRoute);
 app.use('/api/profile',profileRoute)
+app.use('/api/insurance-details',insuranceDetailsRoute);
 
 async function start() {
     try {
