@@ -98,20 +98,25 @@ class AuthService{
       fullName,
       relation_id
     );
+   if (!familyMember) {
+  throw new Error("Family member invite not found");
+}
 
-  if (!familyMember) {
-    throw new Error('Family member invite not found');
-  }
+    if (familyMember.is_active === false) {
+      throw new Error("Family member account is inactive");
+    }
 
-  const token = generateToken({
-    id: familyMember.id,
-    role: 'family_member'
-  });
+    const token = generateToken({
+      id: familyMember.id,
+      role: "family_member",
+    });
 
-  return {
-    token,
-    familyMember
-  };
+    return {
+      token,
+      familyMember,
+    };
+
+
 }
 
 }

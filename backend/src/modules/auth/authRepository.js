@@ -45,7 +45,7 @@ class AuthRepository {
 
   async findFamilyMemberInvite(ownerId, fullName, relationId) {
     const query = `
-      SELECT id, parent_id, username, email, phone_number, date_of_birth, gender, role, relation_id, created_at
+      SELECT id, parent_id, username, email, phone_number, date_of_birth, gender, role, relation_id, created_at,is_active
       FROM users
       WHERE parent_id = $1
       AND LOWER(username) = LOWER($2)
@@ -60,6 +60,8 @@ class AuthRepository {
 
     return result.rows[0];
   }
+
+  
 
 }
 

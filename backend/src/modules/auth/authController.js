@@ -21,6 +21,7 @@ class AuthController {
       'Invalid family policy information',
       'Family member invite not found',
       'All profile fields are required',
+      'Family member account is inactive'
     ];
 
     if (badRequestErrors.includes(error.message)) {

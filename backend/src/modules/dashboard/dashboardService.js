@@ -1,5 +1,4 @@
 import dashboardRepository from "./dashboardRepository.js";
-import authRepository from "../auth/authRepository.js";
 import {generatePolicyQRCode} from "./qrCode.js";
 
 class DashboardService {
@@ -7,7 +6,7 @@ class DashboardService {
   async getDashboardByUserId(userId) {
     try {
 
-      const user = await authRepository.getUserById(userId);
+      const user = await dashboardRepository.getUserById(userId);
 
       if (!user) {
         throw new Error("User not found");
