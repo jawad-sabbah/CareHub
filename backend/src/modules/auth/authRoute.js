@@ -19,11 +19,6 @@ router.post(
   authController.logout.bind(authController)
 );
 
-router.post(
-  '/invite-family-member',
-  authMiddleware,
-  authController.registerFamilyMember.bind(authController)
-);
 
 router.post(
   '/join-family-member',

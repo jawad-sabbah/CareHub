@@ -1,5 +1,9 @@
 import familyRepository from "./familyRepository.js";
-
+import authRepository from "../auth/authRepository.js"
+import {
+validateDateOfBirth,validateEmail,validateGender,validatePhone
+} from '../../shared/validators/validFamilyMemberData.js'
+import bcrypt from 'bcrypt'
 
 class FamilyService {
   
@@ -43,6 +47,39 @@ class FamilyService {
     };
   }
 
+  async registerFamilyMember(ownerId, data) {
+      const { fullName, email, phone_number, date_of_birth,gender, relation_id } = data;
+
+    if (!fullName || !email || !phone_number || !date_of_birth|| !gender || !relation_id) {
+      throw new Error("All family member fields are required");
+    }
+
+    validateEmail(email);
+    validatePhone(phone_number);
+    validateGender(gender)
+    validateDateOfBirth(date_of_birth);
+
+    const existingUser = await authRepository.getUserByEmail(email);
+
+    if (existingUser) {
+      throw new Error("Email already exists");
+    }
+
+    const temporaryPassword = phone_number;
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+
+    return await familyRepository.registerFamilyMember(
+      fullName,
+      email,
+      phone_number,
+      date_of_birth,
+      gender,
+      hashedPassword,
+      ownerId,
+      relation_id
+    );
+  }
+
   async deleteFamilyMember(memberId, userId) {
   const deletedMember =
     await familyRepository.deleteFamilyMember(memberId, userId);
@@ -56,7 +93,7 @@ class FamilyService {
     name: deletedMember.username,
     isActive: deletedMember.is_active,
   };
-}
+  }
 }
 
 export default new FamilyService();

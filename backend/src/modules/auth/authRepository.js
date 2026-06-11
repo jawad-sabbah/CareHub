@@ -43,30 +43,6 @@ class AuthRepository {
     return result.rows[0];
   }
 
-  async registerFamilyMember(fullName, email, phone_number, date_of_birth, hashedPassword, parent_id, relation_id) {
-    const query = `
-      INSERT INTO users
-      (parent_id, username, email, password, phone_number, date_of_birth, gender, role, relation_id)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-      RETURNING id, parent_id, username, email, phone_number, date_of_birth, gender, role, relation_id, created_at
-    `;
-
-    const values = [
-      parent_id,
-      fullName,
-      email,
-      hashedPassword,
-      phone_number,
-      date_of_birth,
-      null,
-      'user',
-      relation_id
-    ];
-
-    const result = await pool.query(query, values);
-    return result.rows[0];
-  }
-
   async findFamilyMemberInvite(ownerId, fullName, relationId) {
     const query = `
       SELECT id, parent_id, username, email, phone_number, date_of_birth, gender, role, relation_id, created_at

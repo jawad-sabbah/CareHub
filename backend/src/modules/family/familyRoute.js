@@ -8,4 +8,7 @@ router.get("/", authMiddleware, familyController.getFamilyMembers);
 
 router.delete("/:id", authMiddleware, familyController.deleteFamilyMember);
 
+router.post('/invite-family-member',authMiddleware,familyController.registerFamilyMember
+);
+
 export default router;

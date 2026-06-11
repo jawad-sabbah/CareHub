@@ -44,6 +44,28 @@ class FamilyController {
     });
   }
 }
+
+ async registerFamilyMember(req, res) {
+    try {
+      const ownerId = req.user.id;
+
+      const newUser = await familyService.registerFamilyMember(
+        ownerId,
+        req.body
+      );
+
+      return res.status(201).json({
+        success: true,
+        message: 'Family member invited successfully',
+        data: newUser
+      });
+    } catch (error) {
+     return res.status(404).json({
+      success: false,
+      message: error.message || "Failed to add family member",
+    });
+    }
+  }
 }
 
 export default new FamilyController();

@@ -92,25 +92,6 @@ class AuthController {
     }
   }
 
-  async registerFamilyMember(req, res) {
-    try {
-      const ownerId = req.user.id;
-
-      const newUser = await authService.registerFamilyMember(
-        ownerId,
-        req.body
-      );
-
-      return res.status(201).json({
-        success: true,
-        message: 'Family member invited successfully',
-        data: newUser
-      });
-    } catch (error) {
-      return this.handleError(res, error);
-    }
-  }
-
   async joinFamilyMember(req, res) {
   try {
     const result =

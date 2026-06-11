@@ -3,27 +3,8 @@ import authRepository from './authRepository.js';
 import generateToken from '../../utils/generateToken.js';
 import { validateRegisterData } from '../../shared/validators/validRegisterData.js';
 
-class AuthService {
+class AuthService{
   
-  validateFamilyMemberData(data) {
-    const { fullName, email, phone_number, date_of_birth, relation_id } = data;
-
-    if (!fullName || !email || !phone_number || !date_of_birth || !relation_id) {
-      throw new Error('All family member fields are required');
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      throw new Error('Invalid email format');
-    }
-
-    if (!/^\d{8}$/.test(phone_number)) {
-      throw new Error('Phone number must be 8 digits');
-    }
-
-    if (isNaN(new Date(date_of_birth).getTime())) {
-      throw new Error('Invalid date of birth format');
-    }
-  }
 
   async registerAsInsuranceOwner(data) {
 
@@ -81,31 +62,6 @@ class AuthService {
 
   async logout() {
     return true;
-  }
-
-  async registerFamilyMember(ownerId, data) {
-    this.validateFamilyMemberData(data);
-
-    const { fullName, email, phone_number, date_of_birth, relation_id } = data;
-
-    const existingUser = await authRepository.getUserByEmail(email);
-
-    if (existingUser) {
-      throw new Error('Email already exists');
-    }
-
-    const temporaryPassword = phone_number;
-    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
-
-    return await authRepository.registerFamilyMember(
-      fullName,
-      email,
-      phone_number,
-      date_of_birth,
-      hashedPassword,
-      ownerId,
-      relation_id
-    );
   }
 
  async joinFamilyMember(data) {
