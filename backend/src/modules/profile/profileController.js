@@ -1,6 +1,7 @@
-import authService from './authService.js';
+import profileService from "./profileService.js";
 
-class AuthController {
+class ProfileController
+{
   handleError(res, error) {
     const badRequestErrors = [
       'All fields are required',
@@ -47,87 +48,48 @@ class AuthController {
       message: 'Server error'
     });
   }
-
-  async registerAsInsuranceOwner(req, res) {
+  
+async changePassword(req, res) {
     try {
-      const newUser = await authService.registerAsInsuranceOwner(req.body);
+      const userId = req.user.id;
 
-      return res.status(201).json({
-        success: true,
-        message: 'User registered successfully',
-        data: newUser
-      });
-    } catch (error) {
-      return this.handleError(res, error);
-    }
-  }
+      const { currentPassword, newPassword, confirmPassword } = req.body;
 
-  async login(req, res) {
-    try {
-      const { email, password } = req.body;
-
-      const result = await authService.login(email, password);
-
-      return res.status(200).json({
-        success: true,
-        message: 'Login successful',
-        token: result.token,
-        data: result.user
-      });
-    } catch (error) {
-      return this.handleError(res, error);
-    }
-  }
-
-  async logout(req, res) {
-    try {
-      await authService.logout();
-
-      return res.status(200).json({
-        success: true,
-        message: 'Logged out successfully'
-      });
-    } catch (error) {
-      return this.handleError(res, error);
-    }
-  }
-
-  async registerFamilyMember(req, res) {
-    try {
-      const ownerId = req.user.id;
-
-      const newUser = await authService.registerFamilyMember(
-        ownerId,
-        req.body
+      const updatedUser = await profileService.changePassword(
+        userId,
+        currentPassword,
+        newPassword,
+        confirmPassword
       );
 
-      return res.status(201).json({
+      return res.status(200).json({
         success: true,
-        message: 'Family member invited successfully',
-        data: newUser
+        message: 'Password updated successfully',
+        data: updatedUser
       });
     } catch (error) {
       return this.handleError(res, error);
     }
   }
 
-  async joinFamilyMember(req, res) {
+async updateProfile(req, res) {
   try {
-    const result =
-      await authService.joinFamilyMember(req.body);
+    const userId = req.user.id;
+
+    const updatedUser = await profileService.updateProfile(
+      userId,
+      req.body
+    );
 
     return res.status(200).json({
       success: true,
-      message: 'Family member verified successfully',
-      token: result.token,
-      data: result.familyMember
+      message: 'Profile updated successfully',
+      data: updatedUser
     });
   } catch (error) {
     return this.handleError(res, error);
   }
+  }
 }
 
-
-}
-
-export default new AuthController();
+export default new ProfileController()

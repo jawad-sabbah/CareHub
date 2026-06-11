@@ -1,36 +1,10 @@
 import bcrypt from 'bcrypt';
 import authRepository from './authRepository.js';
 import generateToken from '../../utils/generateToken.js';
+import { validateRegisterData } from '../../shared/validators/validRegisterData.js';
 
 class AuthService {
-  validateRegisterData(data) {
-    const { fullName, email, phone_number, date_of_birth, gender, password } = data;
-
-    if (!fullName || !email || !phone_number || !date_of_birth || !gender || !password) {
-      throw new Error('All fields are required');
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      throw new Error('Invalid email format');
-    }
-
-    if (!/^\d{8}$/.test(phone_number)) {
-      throw new Error('Phone number must be 8 digits');
-    }
-
-    if (!['M', 'F'].includes(gender)) {
-      throw new Error('Gender must be M or F');
-    }
-
-    if (password.length < 6) {
-      throw new Error('Password must be at least 6 characters');
-    }
-
-    if (isNaN(new Date(date_of_birth).getTime())) {
-      throw new Error('Invalid date of birth format');
-    }
-  }
-
+  
   validateFamilyMemberData(data) {
     const { fullName, email, phone_number, date_of_birth, relation_id } = data;
 
@@ -51,36 +25,10 @@ class AuthService {
     }
   }
 
-  validateUpdateProfileData(data) {
-  const {
-    fullName,
-    email,
-    phone_number,
-    gender
-  } = data;
-
-  if (!fullName || !email || !phone_number || !gender) {
-    throw new Error('All profile fields are required');
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailRegex.test(email)) {
-    throw new Error('Invalid email format');
-  }
-
-  if (!/^\d{8}$/.test(phone_number)) {
-    throw new Error('Phone number must be 8 digits');
-  }
-
-  if (!['M', 'F'].includes(gender)) {
-    throw new Error('Gender must be M or F');
-  }
-}
-
   async registerAsInsuranceOwner(data) {
-    this.validateRegisterData(data);
 
+    validateRegisterData(data);
+   
     const { fullName, email, phone_number, date_of_birth, gender, password } = data;
 
     const existingUser = await authRepository.getUserByEmail(email);
@@ -135,38 +83,6 @@ class AuthService {
     return true;
   }
 
-  async changePassword(userId, currentPassword, newPassword, confirmPassword) {
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      throw new Error('All password fields are required');
-    }
-
-    if (newPassword !== confirmPassword) {
-      throw new Error('New password and confirm password do not match');
-    }
-
-    const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
-
-    if (!passwordRegex.test(newPassword)) {
-      throw new Error('Password must be at least 8 characters and contain a number and special character');
-    }
-
-    const user = await authRepository.getUserById(userId);
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-
-    if (!isMatch) {
-      throw new Error('Current password is incorrect');
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    return await authRepository.updatePassword(userId, hashedPassword);
-  }
-
   async registerFamilyMember(ownerId, data) {
     this.validateFamilyMemberData(data);
 
@@ -192,7 +108,7 @@ class AuthService {
     );
   }
 
-   async joinFamilyMember(data) {
+ async joinFamilyMember(data) {
   const {
     policy_code,
     owner_email,
@@ -240,42 +156,6 @@ class AuthService {
     token,
     familyMember
   };
-}
-
-
-async updateProfile(userId, data) {
-  const {
-    fullName,
-    email,
-    phone_number,
-    gender
-  } = data;
-
-  this.validateUpdateProfileData(data);
-
-  const existingEmail =
-    await authRepository.getUserByEmailExceptUserId(
-      email,
-      userId
-    );
-
-  if (existingEmail) {
-    throw new Error('Email already exists');
-  }
-
-  const updatedUser = await authRepository.updateProfile(
-    userId,
-    fullName,
-    email,
-    phone_number,
-    gender
-  );
-
-  if (!updatedUser) {
-    throw new Error('User not found');
-  }
-
-  return updatedUser;
 }
 
 }

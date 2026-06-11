@@ -19,12 +19,6 @@ router.post(
   authController.logout.bind(authController)
 );
 
-router.put(
-  '/change-password',
-  authMiddleware,
-  authController.changePassword.bind(authController)
-);
-
 router.post(
   '/invite-family-member',
   authMiddleware,
@@ -36,11 +30,5 @@ router.post(
   authController.joinFamilyMember.bind(authController)
 );
 
-
-router.put(
-  '/profile',
-  authMiddleware,
-  authController.updateProfile.bind(authController)
-);
 
 export default router;
