@@ -22,6 +22,7 @@ class ProfileController
       'Invalid family policy information',
       'Family member invite not found',
       'All profile fields are required',
+      'No profile for this user'
     ];
 
     if (badRequestErrors.includes(error.message)) {
@@ -49,6 +50,22 @@ class ProfileController
     });
   }
   
+async userProfile(req,res)
+{
+  try {
+    const userId=req.user.id
+    const userData=await profileService.getUserProfile(userId)
+    return res.status(201).json({
+      success:true,
+      message:'user Profile data fetched successfully',
+      data:userData
+    })
+    
+  } catch (error) {
+     return this.handleError(res, error);
+  }
+}
+
 async changePassword(req, res) {
     try {
       const userId = req.user.id;

@@ -10,6 +10,23 @@ import {
 } from "../../shared/validators/validUpdateProfileData.js";
 
 class ProfileService {
+
+  async getUserProfile(userId) {
+    const userProfile=await profileRepository.getUserById(userId);
+    if (!userProfile) {
+      throw new Error("No profile for this user")
+    }
+    
+    return {
+      id:userProfile.id,
+      userName:userProfile.username,
+      email:userProfile.email,
+      phone:userProfile.phone_number,
+      date_of_birth:userProfile.date_of_birth,
+      gender:userProfile.gender
+    }
+  }
+
   async changePassword(userId, currentPassword, newPassword, confirmPassword) {
     if (!currentPassword || !newPassword || !confirmPassword) {
       throw new Error("All password fields are required");

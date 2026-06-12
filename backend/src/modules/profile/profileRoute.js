@@ -4,6 +4,13 @@ import { authMiddleware } from '../../middleware/auth.middleware.js';
 
 const router = express.Router();
 
+
+router.get(
+  '/',
+ authMiddleware,
+ profileController.userProfile.bind(profileController)
+)
+
 router.put(
   '/change-password',
   authMiddleware,
