@@ -38,7 +38,7 @@ class MedicalRecordService {
   const firstRecord = record[0];
 
   return {
-    id: firstRecord.id,
+    id: firstRecord.record_id,
     diagnosis: firstRecord.diagnosis,
     icd10Code: firstRecord.icd10_code,
     visitDate: firstRecord.visit_date,

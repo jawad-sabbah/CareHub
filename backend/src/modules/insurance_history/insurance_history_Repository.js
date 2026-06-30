@@ -18,7 +18,9 @@ class InsuranceHistoryRepository {
       ON ih.insurance_id = i.id
     INNER JOIN insurance_plan ip
       ON i.insurance_plan_id = ip.id
-    WHERE i.user_id = $1
+    INNER JOIN users u
+      ON u.id = $1
+    WHERE i.user_id = COALESCE(u.parent_id, u.id)
       AND (
         $2 = ''
         OR LOWER(ip.name) LIKE LOWER($2)

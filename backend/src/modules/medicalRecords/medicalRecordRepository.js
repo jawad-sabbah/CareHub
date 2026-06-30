@@ -30,6 +30,7 @@ class MedicalRecordRepository {
 
   async getMedicalRecordById(recordId, userId) {
       const query = `SELECT
+    mr.id AS record_id,  
     mr.diagnosis,
     mr.icd10_code,
     mr.visit_date,

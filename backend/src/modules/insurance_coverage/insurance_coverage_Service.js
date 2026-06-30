@@ -1,4 +1,4 @@
-import InsuranceCoverageRepository from "./insurance_coverage_repository.js";
+import InsuranceCoverageRepository from "./insurance_coverage_Repository.js";
 
 class InsuranceCoverageService {
   async InsuranceCoverageDetails(userId) {
@@ -9,13 +9,9 @@ class InsuranceCoverageService {
       throw new Error("Insurance Coverage Details not found");
     }
 
-     console.log(insuranceCoverageDetails);
-     
-
-
     return {
       user: {
-        id:insuranceCoverageDetails.id,
+        id: insuranceCoverageDetails.user_id,
         username: insuranceCoverageDetails.username,
       },
 
@@ -27,10 +23,11 @@ class InsuranceCoverageService {
       },
 
       plan: {
-        coverage_percentage: insuranceCoverageDetails.coverage_percentage,
+        name: insuranceCoverageDetails.plan_name,
+        coverage_percentage: Number(insuranceCoverageDetails.coverage_percentage),
         annual_limit: Number(insuranceCoverageDetails.annual_limit),
-        used_amount:insuranceCoverageDetails.used_amount,
-        remaining_amount:insuranceCoverageDetails.remaining_amount
+        used_amount: Number(insuranceCoverageDetails.used_amount),
+        remaining_amount: Number(insuranceCoverageDetails.remaining_amount)
       },
 
       benefits: insuranceCoverageDetails.benefits,

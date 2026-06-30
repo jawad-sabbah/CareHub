@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import pool from './config/db.js';
 
 import  authRoute from '../src/modules/auth/authRoute.js';
@@ -18,6 +19,16 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+}));
 
 app.use(express.json());
 app.use('/api/auth',authRoute);

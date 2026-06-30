@@ -46,7 +46,8 @@ class MedicalCenterRepository {
         name,
         type,
         address,
-        phone
+        phone,
+        is_open
       FROM medical_center
       WHERE type = $1
       ORDER BY name;
@@ -63,7 +64,8 @@ class MedicalCenterRepository {
         name,
         type,
         address,
-        phone
+        phone,
+        is_open
       FROM medical_center
       WHERE
         LOWER(name) LIKE LOWER($1)

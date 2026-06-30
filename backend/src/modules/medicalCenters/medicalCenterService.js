@@ -7,16 +7,6 @@ class MedicalCenterService {
       throw new Error("No medical centers found");
     }
 
-    let status = "";
-    for(let i = 0; i < centers.length; i++) {
-        if(centers[i].is_open==false) {
-            status = "closed";
-        } else {
-            status = "open";
-        }
-    }
-
-
     return centers.map((center) => ({
       id: center.id,
       name: center.name,
@@ -37,8 +27,7 @@ class MedicalCenterService {
     let status = "";
     if (center.is_open === false) {
       status = "closed";
-    }
-    else{
+    } else {
       status = "open";
     }
 
@@ -71,7 +60,7 @@ class MedicalCenterService {
       type: center.type,
       address: center.address,
       phone: center.phone,
-      status: "open",
+      status: center.is_open === false ? "closed" : "open",
     }));
   }
 
@@ -89,7 +78,7 @@ class MedicalCenterService {
       type: center.type,
       address: center.address,
       phone: center.phone,
-      status: "open",
+      status: center.is_open === false ? "closed" : "open",
     }));
   }
 }

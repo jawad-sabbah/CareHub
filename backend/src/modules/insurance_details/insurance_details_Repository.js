@@ -4,10 +4,24 @@ class insuranceDetailsRepository
 {
   async getInsuranceDetailsByUserId(userId){
      const query=`
-      select users.id as user_id,username,relation_id,policy_code,provider_name,status,start_date,expiry_date,name as planName,coverage_percentage,annual_limit,description
-      from users 
+      select
+        users.id as user_id,
+        username,
+        relation_id,
+        insurance.id as insurance_id,
+        policy_code,
+        provider_name,
+        status,
+        start_date,
+        expiry_date,
+        insurance_plan.id as plan_id,
+        name as plan_name,
+        coverage_percentage,
+        annual_limit,
+        description
+      from users
       join insurance
-      on users.id=insurance.user_id
+      on insurance.user_id = COALESCE(users.parent_id, users.id)
       join insurance_plan
       on insurance.insurance_plan_id=insurance_plan.id
       where users.id=$1

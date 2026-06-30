@@ -9,29 +9,31 @@ class DashboardRepository {
   }
   
   async getInsuranceByUserId(userId) {
-    const query = `
-      SELECT
-        i.id,
-        i.policy_code,
-        i.provider_name,
-        i.status,
-        i.start_date,
-        i.expiry_date,
-        ip.id AS insurance_plan_id,
-        ip.name,
-        ip.coverage_percentage,
-        ip.annual_limit,
-        ip.description
-      FROM insurance i
-      JOIN insurance_plan ip
-        ON i.insurance_plan_id = ip.id
-      WHERE i.user_id = $1
-      LIMIT 1;
-    `;
+  const query = `
+    SELECT
+      i.id,
+      i.policy_code,
+      i.provider_name,
+      i.status,
+      i.start_date,
+      i.expiry_date,
+      ip.id AS insurance_plan_id,
+      ip.name,
+      ip.coverage_percentage,
+      ip.annual_limit,
+      ip.description
+    FROM insurance i
+    JOIN insurance_plan ip
+      ON i.insurance_plan_id = ip.id
+    JOIN users u
+      ON u.id = $1
+    WHERE i.user_id = COALESCE(u.parent_id, u.id)
+    LIMIT 1;
+  `;
 
-    const result = await pool.query(query, [userId]);
-    return result.rows[0];
-  }
+  const result = await pool.query(query, [userId]);
+  return result.rows[0];
+}
 
   async getRecentMedicalRecords(userId) {
     const query = `
