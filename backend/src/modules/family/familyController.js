@@ -66,6 +66,26 @@ class FamilyController {
     });
     }
   }
+
+  async searchEligibleMembers(req, res) {
+    try {
+      const data = await familyService.searchEligibleMembers(req.user.id, req.query.q || "");
+      return res.status(200).json({ success: true, message: "Members found", data });
+    } catch (error) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
+  async enrollMember(req, res) {
+    try {
+      const { member_id, relation_id } = req.body;
+      const data = await familyService.enrollMember(req.user.id, member_id, relation_id);
+      return res.status(200).json({ success: true, message: "Member added to policy", data });
+    } catch (error) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
+  
 }
 
 export default new FamilyController();

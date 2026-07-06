@@ -240,7 +240,7 @@ class _CoverageScreenState extends State<CoverageScreen> {
                 const Text('Annual Limit', style: TextStyle(color: Colors.grey, fontSize: 13)),
                 Text(_formatCurrency(c.annualLimit), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 6),
-                Text('${_formatCurrency(c.usedAmount)} used (${(usedPercent * 100).toStringAsFixed(0)}%)',
+                Text('${_formatCurrency(c.usedAmount)} used',
                     style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
               ],
             ),

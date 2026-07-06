@@ -25,6 +25,8 @@ class FamilyService {
       members: members.map((member) => ({
         id: member.id,
         name: member.username,
+        email: member.email,
+        phoneNumber: member.phone_number,
         relation: member.relation || "Primary Policy Holder",
         gender: member.gender,
         dateOfBirth: member.date_of_birth,
@@ -94,6 +96,26 @@ class FamilyService {
     isActive: deletedMember.is_active,
   };
   }
+
+  async searchEligibleMembers(ownerId, term) {
+    if (!term || term.trim().length < 2) {
+      throw new Error("Search term must be at least 2 characters");
+    }
+    const rows = await familyRepository.searchEligibleMembers(ownerId, term.trim());
+    return rows.map((r) => ({ id: r.id, name: r.username, email: r.email }));
+  }
+
+  async enrollMember(ownerId, memberId, relationId) {
+    if (!memberId || !relationId) {
+      throw new Error("Member and relationship are required");
+    }
+    const enrolled = await familyRepository.enrollMember(ownerId, memberId, relationId);
+    if (!enrolled) {
+      throw new Error("Member not found or already on a policy");
+    }
+    return { id: enrolled.id, name: enrolled.username, email: enrolled.email };
+  }
+  
 }
 
 export default new FamilyService();

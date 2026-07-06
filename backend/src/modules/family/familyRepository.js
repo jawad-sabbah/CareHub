@@ -8,6 +8,8 @@ class FamilyRepository {
     SELECT
       u.id,
       u.username,
+      u.email,
+      u.phone_number,
       u.date_of_birth,
       u.gender,
       u.created_at,
@@ -83,6 +85,37 @@ class FamilyRepository {
 
   return result.rows[0];
 }
+
+
+async searchEligibleMembers(ownerId, term) {
+    const query = `
+      SELECT u.id, u.username, u.email
+      FROM users u
+      WHERE u.is_active = TRUE
+        AND u.id <> $1
+        AND COALESCE(u.parent_id, 0) <> $1
+        AND (u.username ILIKE $2 OR u.email ILIKE $2)
+      ORDER BY u.username
+      LIMIT 10;
+    `;
+    const result = await pool.query(query, [ownerId, `%${term}%`]);
+    return result.rows;
+  }
+
+  async enrollMember(ownerId, memberId, relationId) {
+    const query = `
+      UPDATE users
+      SET parent_id = $1, relation_id = $3
+      WHERE id = $2
+        AND is_active = TRUE
+        AND COALESCE(parent_id, 0) <> $1
+      RETURNING id, username, email;
+    `;
+    const result = await pool.query(query, [ownerId, memberId, relationId]);
+    return result.rows[0];
+  }
+
+
 }
 
 export default new FamilyRepository();

@@ -32,7 +32,7 @@ class InsuranceDetailsService {
       },
       plan: {
         id: insurance.plan_id,
-        name: insurance.planname,
+        name: insurance.plan_name,
         coveragePercentage: insurance.coverage_percentage,
         annualLimit: insurance.annual_limit,
         description:insurance.description

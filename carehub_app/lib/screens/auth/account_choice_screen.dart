@@ -54,6 +54,16 @@ class _AccountChoiceScreenState extends State<AccountChoiceScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  tooltip: 'Back to welcome',
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+              const SizedBox(height: 8),
               authLogo(),
               const SizedBox(height: 20),
               const Text('HealthLink',

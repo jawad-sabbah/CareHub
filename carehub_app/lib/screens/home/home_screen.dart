@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import '../../widgets/coverage_overview.dart';
+import '../../widgets/visits_chart.dart';
 import '../../models/dashboard_data.dart';
 import '../../services/dashboard_service.dart';
 import '../../services/session.dart';
@@ -87,10 +89,14 @@ class _HomeScreenState extends State<HomeScreen> {
               if (data.insuranceCard != null) _insuranceCard(data.insuranceCard!)
               else _noInsuranceCard(),
               const SizedBox(height: 28),
+              CoverageOverview(data: data),            
+              const SizedBox(height:28),
               const Text('Quick Actions', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               _quickActionsGrid(context),
               const SizedBox(height: 28),
+              VisitsChart(months: data.monthlyVisits),
+              const SizedBox(height:28),
               const Text('Recent Medical Records', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               if (data.recentMedicalRecords.isEmpty)
@@ -228,53 +234,44 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _quickActionsGrid(BuildContext context) {
+  
+   Widget _quickActionsGrid(BuildContext context) {
     final actions = <_QuickAction>[
       _QuickAction('Medical History', Icons.history, () {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const MedicalRecordsListScreen()),
-        ); 
+        );
       }),
       _QuickAction('Insurance Details', Icons.description_outlined, () {
         Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const InsuranceDetailsScreen()),
-      );
+          MaterialPageRoute(builder: (_) => const InsuranceDetailsScreen()),
+        );
       }),
       _QuickAction('Medical Centers', Icons.add_box_outlined, () {
-         Navigator.of(context).push(
+        Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const MedicalCentersListScreen()),
         );
       }),
       _QuickAction('Insurance History', Icons.receipt_long_outlined, () {
-         Navigator.of(context).push(
+        Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const InsuranceHistoryScreen()),
         );
       }),
-      // Owner-only: only policy owners can invite new family members.
       if (Session.isPrimary)
-      ...[
-        _QuickAction('Add Family Member', Icons.person_add_alt_1_outlined, () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const AddFamilyMemberScreen()),
-          );
-        }),
-        _QuickAction('Family Members', Icons.groups_outlined, () {
+        _QuickAction('Family', Icons.groups_outlined, () {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const FamilyListScreen()),
           );
         }),
-      ],
-      // Visible to both roles - viewing the family list is fine for everyone.
-     
     ];
 
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 14,
-      crossAxisSpacing: 14,
-      childAspectRatio: 1.3,
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: 1.9, // higher = shorter cards
       children: actions.map((a) => _quickActionCard(a)).toList(),
     );
   }
@@ -282,11 +279,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _quickActionCard(_QuickAction action) {
     return InkWell(
       onTap: action.onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(14),
       child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
         ),
         child: Column(
@@ -294,13 +292,16 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             CircleAvatar(
               backgroundColor: const Color(0xFFE8EAF6),
-              radius: 22,
-              child: Icon(action.icon, color: const Color(0xFF1E3FE0)),
+              radius: 16,
+              child: Icon(action.icon, color: const Color(0xFF1E3FE0), size: 18),
             ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(action.label, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 6),
+            Text(
+              action.label,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
             ),
           ],
         ),

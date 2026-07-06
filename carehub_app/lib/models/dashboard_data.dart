@@ -64,6 +64,10 @@ class DashboardData {
   final int familyMembersCount;
   final int medicalRecordsCount;
 
+  final double? annualLimit;
+  final double? usedAmount;
+  final List<MonthlyVisit> monthlyVisits;
+
   DashboardData({
     required this.userId,
     required this.username,
@@ -71,6 +75,9 @@ class DashboardData {
     required this.recentMedicalRecords,
     required this.familyMembersCount,
     required this.medicalRecordsCount,
+    this.annualLimit,
+    this.usedAmount,
+    this.monthlyVisits = const [],
   });
 
   factory DashboardData.fromJson(Map<String, dynamic> json) {
@@ -78,6 +85,8 @@ class DashboardData {
     final card = json['insuranceCard'] as Map<String, dynamic>?;
     final records = json['recentMedicalRecords'] as List? ?? [];
     final counts = json['counts'] as Map<String, dynamic>? ?? {};
+    final coverage = json['coverage'] as Map<String, dynamic>?;
+    final visits = json['monthlyVisits'] as List? ?? [];
 
     return DashboardData(
       userId: user['id'] as int,
@@ -88,6 +97,26 @@ class DashboardData {
           .toList(),
       familyMembersCount: counts['familyMembers'] as int? ?? 0,
       medicalRecordsCount: counts['medicalRecords'] as int? ?? 0,
+        annualLimit: (coverage?['annualLimit'] as num?)?.toDouble(),
+        usedAmount: (coverage?['usedAmount'] as num?)?.toDouble(),
+        monthlyVisits: visits
+            .map((m) => MonthlyVisit.fromJson(m as Map<String, dynamic>))
+            .toList(),
+    );
+  }
+}
+
+
+class MonthlyVisit {
+  final String label; // e.g. "Jan"
+  final int count;
+
+  MonthlyVisit({required this.label, required this.count});
+
+  factory MonthlyVisit.fromJson(Map<String, dynamic> json) {
+    return MonthlyVisit(
+      label: json['label'] as String? ?? '',
+      count: (json['count'] as num?)?.toInt() ?? 0,
     );
   }
 }

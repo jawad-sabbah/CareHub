@@ -79,6 +79,55 @@ class DashboardRepository {
     const result = await pool.query(query, [userId]);
     return Number(result.rows[0].total);
   }
+
+
+  async getCoverageUsage(userId) {
+    const query = `
+      SELECT
+        ip.annual_limit,
+        COALESCE(usage.used_amount, 0) AS used_amount
+      FROM users u
+      JOIN insurance i        ON i.user_id = COALESCE(u.parent_id, u.id)
+      JOIN insurance_plan ip  ON i.insurance_plan_id = ip.id
+      LEFT JOIN (
+        SELECT
+          mr.user_id,
+          SUM(ms.default_cost * ip2.coverage_percentage / 100) AS used_amount
+        FROM medical_record mr
+        JOIN medical_record_service mrs ON mrs.medical_record_id = mr.id
+        JOIN medical_service ms         ON ms.id = mrs.service_id
+        JOIN insurance i2               ON i2.user_id = mr.user_id
+        JOIN insurance_plan ip2         ON ip2.id = i2.insurance_plan_id
+        GROUP BY mr.user_id
+      ) usage ON usage.user_id = COALESCE(u.parent_id, u.id)
+      WHERE u.id = $1
+      LIMIT 1;
+    `;
+    const result = await pool.query(query, [userId]);
+    return result.rows[0]; // { annual_limit, used_amount } or undefined
+  }
+
+  async getMonthlyVisits(userId) {
+    const query = `
+      SELECT
+        to_char(m.month_start, 'Mon') AS label,
+        COALESCE(v.count, 0)::int     AS count
+      FROM generate_series(
+             date_trunc('month', CURRENT_DATE) - INTERVAL '5 months',
+             date_trunc('month', CURRENT_DATE),
+             INTERVAL '1 month'
+           ) AS m(month_start)
+      LEFT JOIN (
+        SELECT date_trunc('month', visit_date) AS month_start, COUNT(*) AS count
+        FROM medical_record
+        WHERE user_id = $1
+        GROUP BY 1
+      ) v ON v.month_start = m.month_start
+      ORDER BY m.month_start ASC;
+    `;
+    const result = await pool.query(query, [userId]);
+    return result.rows;
+  }
 }
 
 export default new DashboardRepository();

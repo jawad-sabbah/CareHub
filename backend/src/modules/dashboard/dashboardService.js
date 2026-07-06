@@ -30,6 +30,12 @@ class DashboardService {
       const medicalRecordsCount =
         await dashboardRepository.getMedicalRecordsCount(userId);
 
+
+        const coverageUsage =
+        await dashboardRepository.getCoverageUsage(userId);
+
+      const monthlyVisits =
+        await dashboardRepository.getMonthlyVisits(userId);
         
       return {
         user: {
@@ -58,6 +64,16 @@ class DashboardService {
           familyMembers: familyMembersCount,
           medicalRecords: medicalRecordsCount,
         },
+        coverage: coverageUsage
+          ? {
+              annualLimit: Number(coverageUsage.annual_limit),
+              usedAmount: Number(coverageUsage.used_amount),
+            }
+          : null,
+        monthlyVisits: monthlyVisits.map((m) => ({
+          label: m.label,
+          count: m.count,
+        })),
       };
 
     } catch (error) {

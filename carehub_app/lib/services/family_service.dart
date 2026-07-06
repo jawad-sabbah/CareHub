@@ -34,4 +34,20 @@ class FamilyService {
   static Future<void> removeFamilyMember(int memberId) async {
     await ApiClient.delete('/family/$memberId', withAuth: true);
   }
+
+
+  static Future<List<EligibleMember>> searchEligibleMembers(String query) async {
+    final json = await ApiClient.get('/family/search', withAuth: true, queryParams: {'q': query});
+    final list = json['data'] as List? ?? [];
+    return list.map((e) => EligibleMember.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  static Future<void> enrollMember({required int memberId, required int relationId}) async {
+    await ApiClient.post('/family/enroll', {
+      'member_id': memberId,
+      'relation_id': relationId,
+    }, withAuth: true);
+  }
+
+  
 }

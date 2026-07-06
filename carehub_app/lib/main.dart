@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'screens/auth/account_choice_screen.dart';
+import 'core/app_theme.dart';
+import 'screens/auth/welcome_screen.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(const CareHubApp());
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CareHubApp extends StatelessWidget {
+  const CareHubApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: AppTheme.brandName,
       debugShowCheckedModeBanner: false,
-      home: AccountChoiceScreen());
+      theme: AppTheme.themeData,
+      home: const WelcomeScreen(),
+    );
   }
 }

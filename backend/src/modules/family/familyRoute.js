@@ -12,4 +12,8 @@ router.delete("/:id", authMiddleware,isInsuranceOwner, familyController.deleteFa
 router.post('/invite-family-member',authMiddleware,isInsuranceOwner,familyController.registerFamilyMember
 );
 
+
+router.get("/search", authMiddleware, isInsuranceOwner, familyController.searchEligibleMembers);
+router.post("/enroll", authMiddleware, isInsuranceOwner, familyController.enrollMember);
+
 export default router;

@@ -81,63 +81,57 @@ class _JoinFamilyScreenState extends State<JoinFamilyScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
+              authBackButton(context),
+              authHeader(
+                icon: Icons.shield_outlined,
+                title: 'Join Family Plan',
+                subtitle: 'Connect to an existing policy',
               ),
-              authLogo(icon: Icons.shield_outlined),
-              const SizedBox(height: 16),
-              const Text('Join Family Plan',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 6),
-              const Text('Connect to an existing policy',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white70, fontSize: 14)),
               const SizedBox(height: 28),
 
-              const Text('Family Policy ID', style: TextStyle(color: Colors.white70, fontSize: 13)),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _policyCodeController,
-                style: const TextStyle(color: Colors.white),
-                decoration: authFieldDecoration(hint: 'e.g. CH-VIP-2026-0001', icon: Icons.shield_outlined),
+              authLabeledField(
+                label: 'Family Policy ID',
+                field: TextField(
+                  controller: _policyCodeController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: authFieldDecoration(hint: 'e.g. CH-VIP-2026-0001', icon: Icons.shield_outlined),
+                ),
               ),
               const SizedBox(height: 16),
 
-              const Text("Owner's Email", style: TextStyle(color: Colors.white70, fontSize: 13)),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _ownerEmailController,
-                keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(color: Colors.white),
-                decoration: authFieldDecoration(hint: 'owner@example.com', icon: Icons.mail_outline),
+              authLabeledField(
+                label: "Owner's Email",
+                field: TextField(
+                  controller: _ownerEmailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: authFieldDecoration(hint: 'owner@example.com', icon: Icons.mail_outline),
+                ),
               ),
               const SizedBox(height: 16),
 
-              const Text('Your Full Name', style: TextStyle(color: Colors.white70, fontSize: 13)),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _nameController,
-                style: const TextStyle(color: Colors.white),
-                decoration: authFieldDecoration(hint: 'Johnathan Doe', icon: Icons.person_outline),
+              authLabeledField(
+                label: 'Your Full Name',
+                field: TextField(
+                  controller: _nameController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: authFieldDecoration(hint: 'Johnathan Doe', icon: Icons.person_outline),
+                ),
               ),
               const SizedBox(height: 16),
 
-              const Text('Relationship', style: TextStyle(color: Colors.white70, fontSize: 13)),
-              const SizedBox(height: 6),
-              DropdownButtonFormField<int>(
-                value: _relationId,
-                dropdownColor: authBgColor,
-                style: const TextStyle(color: Colors.white),
-                decoration: authFieldDecoration(hint: 'Select Relationship', icon: Icons.people_outline),
-                items: _relationOptions.entries
-                    .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value, style: const TextStyle(color: Colors.white))))
-                    .toList(),
-                onChanged: (value) => setState(() => _relationId = value),
+              authLabeledField(
+                label: 'Relationship',
+                field: DropdownButtonFormField<int>(
+                  value: _relationId,
+                  dropdownColor: authBgColor,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: authFieldDecoration(hint: 'Select Relationship', icon: Icons.people_outline),
+                  items: _relationOptions.entries
+                      .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value, style: const TextStyle(color: Colors.white))))
+                      .toList(),
+                  onChanged: (value) => setState(() => _relationId = value),
+                ),
               ),
               const SizedBox(height: 28),
 
@@ -145,17 +139,10 @@ class _JoinFamilyScreenState extends State<JoinFamilyScreen> {
               const SizedBox(height: 24),
               const Center(child: Text('ALREADY HAVE AN ACCOUNT?', style: TextStyle(color: Colors.white54, fontSize: 12))),
               const SizedBox(height: 12),
-              SizedBox(
-                height: 48,
-                child: OutlinedButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SignInScreen()),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    side: const BorderSide(color: Colors.white38),
-                  ),
-                  child: const Text('Sign In', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              authSecondaryButton(
+                label: 'Sign In',
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SignInScreen()),
                 ),
               ),
               const SizedBox(height: 24),
