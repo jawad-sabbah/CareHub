@@ -5,6 +5,7 @@ import '../../services/session.dart';
 import '../../core/api_exception.dart';
 import 'add_family_member_screen.dart';
 import 'give_insurance_screen.dart';
+import '../virtual_Card/virtual_insurance_card.dart';
 
 
 const _brandBlue = Color(0xFF1E3FE0);
@@ -259,12 +260,30 @@ class _FamilyListScreenState extends State<FamilyListScreen> {
   Widget _memberTile(FamilyMember member) {
     final isActive = member.status.toLowerCase() == 'active';
     
+return InkWell(
+  borderRadius: BorderRadius.circular(14),
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14)),
-      child: ListTile(
-        leading: Stack(
+  onTap: () {
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => VirtualInsuranceCardScreen(
+          memberId: member.id,
+        ),
+      ),
+    );
+
+  },
+
+  child: Container(
+    margin: const EdgeInsets.only(bottom: 12),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14),
+    ),
+
+    child: ListTile(
+          leading: Stack(
           children: [
             const CircleAvatar(backgroundColor: Color(0xFFE3E9FF), child: Icon(Icons.person, color: _brandBlue)),
             if (member.isPrimary)
@@ -324,6 +343,7 @@ class _FamilyListScreenState extends State<FamilyListScreen> {
           ],
         ),
       ),
-    );
+    ),
+);
   }
 }

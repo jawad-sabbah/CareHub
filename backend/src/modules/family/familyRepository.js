@@ -114,7 +114,37 @@ async searchEligibleMembers(ownerId, term) {
     const result = await pool.query(query, [ownerId, memberId, relationId]);
     return result.rows[0];
   }
+            
+                
+  async getCardByMemberId(memberId)
+  {
+       const query=`
+       SELECT
+            u.id,
+            u.phone_number,
+            u.date_of_birth,
+            u.gender,
+             
+            r.description AS relationship,
+             
+            i.status,
+            p.name,
+            i.provider_name,
+            i.policy_code,
+            p.coverage_percentage
 
+
+        FROM users u
+        LEFT JOIN relation r ON u.relation_id = r.id
+        LEFT JOIN insurance i ON i.user_id = u.id
+        LEFT JOIN insurance_plan p ON i.insurance_plan_id = p.id
+
+        WHERE u.id = $1;
+              `
+      
+       const result=await pool.query(query,[memberId]);
+       return result.rows[0];       
+  }
 
 }
 

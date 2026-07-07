@@ -85,6 +85,30 @@ class FamilyController {
       return res.status(400).json({ success: false, message: error.message });
     }
   }
+
+
+  async getFamilyMemberCards(req, res) {
+    try{
+
+       const userId = req.user.id; // from JWT middleware
+        const memberId = req.params.memberId;
+
+        const card = await familyService.getCard(userId, memberId);
+
+        return res.status(200).json({
+            success: true,
+            message: "Card fetched successfully",
+            data: card,
+        });
+    }
+    catch(error)
+    {
+        return res.status(404).json({
+            success: false,
+            message: error.message || "Failed to fetch card",
+        });
+    }
+  }
   
 }
 

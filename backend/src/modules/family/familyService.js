@@ -7,7 +7,7 @@ import bcrypt from 'bcrypt'
 
 class FamilyService {
   
-   async getFamilyMembersByUserId(userId) {
+  async getFamilyMembersByUserId(userId) {
     const members = await familyRepository.getFamilyMembersByUserId(userId);
 
     if (!members || members.length === 0) {
@@ -35,7 +35,7 @@ class FamilyService {
       })),
     };
   }
-    async getFamilyMembersCount(userId) {
+  async getFamilyMembersCount(userId) {
     const count = await familyRepository.getFamilyMembersCount(userId);
 
     if (count === 0) {
@@ -116,6 +116,79 @@ class FamilyService {
     return { id: enrolled.id, name: enrolled.username, email: enrolled.email };
   }
   
+  
+  async getCard(userId, memberId){
+
+    const user = await authRepository.getUserById(userId);
+
+    const members =
+        await familyRepository.getFamilyMembersByUserId(memberId);
+
+
+    const member = members[0];
+
+
+    if (!member) {
+        throw new Error("Family member not found");
+    }
+
+
+    // primary user check
+    const isPrimary = user.parent_id == null;
+
+
+    if (!isPrimary && user.id != memberId) {
+        throw new Error(
+          "Access denied"
+        );
+    }
+
+
+    const card =
+        await familyRepository.getCardByMemberId(memberId);
+
+
+    if(!card){
+        throw new Error(
+          "Insurance card not found"
+        );
+    }
+
+
+    return {
+
+        memberId: member.id,
+
+        name: member.username,
+
+        relationship:
+            member.relation || "Dependent",
+
+
+        policyCode:
+            card.policy_code || "",
+
+
+        providerName:
+            card.provider_name || "",
+
+
+        planName:
+            card.name || "",
+
+
+        insuranceStatus:
+            card.status || "ACTIVE",
+
+
+        cardNumber:
+            card.card_number || "",
+
+    };
+
+}
+
+
 }
 
 export default new FamilyService();

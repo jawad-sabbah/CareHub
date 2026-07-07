@@ -5,7 +5,10 @@ import {isInsuranceOwner} from '../../middleware/isInsuranceOwner.js'
 
 const router = express.Router();
 
+
 router.get("/", authMiddleware, familyController.getFamilyMembers);
+
+router.get("/cards/:memberId", authMiddleware, familyController.getFamilyMemberCards);
 
 router.delete("/:id", authMiddleware,isInsuranceOwner, familyController.deleteFamilyMember);
 
