@@ -103,38 +103,36 @@ class FamilyService {
   }
 
 
-async searchEligibleMembers(ownerId, term) {
-  if (!term || term.trim().length < 1) {
-    throw new Error("Search term is required");
+  async searchInactiveMembers(ownerId, term) {
+    const rows = await familyRepository.searchInactiveMembers(
+      ownerId,
+      (term || "").trim()
+    );
+
+    return rows.map((r) => ({
+      id: r.id,
+      name: r.username,
+      email: r.email
+    }));
   }
-  
-  const rows = await familyRepository.searchEligibleMembers(
-    ownerId,
-    term.trim()
-  );
-
-  return rows.map((r) => ({
-    id: r.id,
-    name: r.username,
-    email: r.email
-  }));
-}
 
 
-  async enrollMember(ownerId, memberId, relationId) {
-    if (!memberId || !relationId) {
-      throw new Error("Member and relationship are required");
-    }
-    const enrolled = await familyRepository.enrollMember(ownerId, memberId, relationId);
-    if (!enrolled) {
-      throw new Error("Member not found or already on a policy");
+   async reactivateMember(ownerId, memberId) {
+    if (!memberId) {
+      throw new Error("Member is required");
     }
 
-    // Give the newly enrolled dependent their own coverage record, copied
-    // from the primary (same plan / values), acting as a dependent.
-    await familyRepository.attachPrimaryInsurance(enrolled.id, ownerId);
+    const reactivated = await familyRepository.reactivateMember(ownerId, memberId);
+    if (!reactivated) {
+      throw new Error("Member not found or already active");
+    }
 
-    return { id: enrolled.id, name: enrolled.username, email: enrolled.email };
+    // Safety net: if this dependent somehow has no coverage row, copy one
+    // from the primary. Guarded by NOT EXISTS, so it is a no-op when their
+    // original insurance is still intact after a "remove".
+    await familyRepository.attachPrimaryInsurance(reactivated.id, ownerId);
+
+    return { id: reactivated.id, name: reactivated.username, email: reactivated.email };
   }
   
   

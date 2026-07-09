@@ -93,23 +93,6 @@ class AuthController {
     }
   }
 
-  async joinFamilyMember(req, res) {
-  try {
-    const result =
-      await authService.joinFamilyMember(req.body);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Family member verified successfully',
-      token: result.token,
-      data: result.familyMember
-    });
-  } catch (error) {
-    return this.handleError(res, error);
-  }
-}
-
-
 }
 
 export default new AuthController();

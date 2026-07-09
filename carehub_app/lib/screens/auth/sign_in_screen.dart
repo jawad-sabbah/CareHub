@@ -3,7 +3,7 @@ import '../../services/auth_service.dart';
 import '../../core/api_exception.dart';
 import 'auth_widgets.dart';
 import '../home/main_shell.dart';
-import 'account_choice_screen.dart';
+import 'register_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -65,9 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   padding: EdgeInsets.zero,
                   tooltip: 'Back',
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const AccountChoiceScreen()),
-                  ),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
               const SizedBox(height: 8),
@@ -160,7 +158,9 @@ class _SignInScreenState extends State<SignInScreen> {
               SizedBox(
                 height: 48,
                 child: OutlinedButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                  ),
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),

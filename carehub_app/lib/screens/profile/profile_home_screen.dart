@@ -3,7 +3,7 @@ import '../../models/profile_data.dart';
 import '../../services/profile_service.dart';
 import '../../services/auth_service.dart';
 import '../../core/api_exception.dart';
-import '../auth/account_choice_screen.dart';
+import '../auth/welcome_screen.dart';
 import 'personal_information_screen.dart';
 import 'contact_us_screen.dart';
 import 'privacy_policy_screen.dart';
@@ -64,7 +64,7 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
     await AuthService.logout();
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const AccountChoiceScreen()),
+      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
       (route) => false,
     );
   }
@@ -76,7 +76,7 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFF5F6FA),
         elevation: 0,
-        title: const Text('HealthLink', style: TextStyle(color: Color(0xFF1E3FE0), fontWeight: FontWeight.bold)),
+        title: const Text('CareHub', style: TextStyle(color: Color(0xFF1E3FE0), fontWeight: FontWeight.bold)),
         leading: const SizedBox(),
         automaticallyImplyLeading: false,
       ),

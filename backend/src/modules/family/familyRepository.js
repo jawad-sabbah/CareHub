@@ -87,39 +87,37 @@ class FamilyRepository {
 }
 
 
- async searchEligibleMembers(ownerId, term) {
-  const query = `
-    SELECT u.id, u.username, u.email
-    FROM users u
-    WHERE
-      u.id <> $1
-      AND (
-        u.username ILIKE $2
-        OR u.email ILIKE $2
-      )
-    ORDER BY u.username
-    LIMIT 10;
-  `;
+   async searchInactiveMembers(ownerId, term) {
+    const query = `
+      SELECT u.id, u.username, u.email
+      FROM users u
+      WHERE
+        u.parent_id = $1
+        AND u.is_active = FALSE
+        AND (
+          $2 = ''
+          OR u.username ILIKE '%' || $2 || '%'
+          OR u.email ILIKE '%' || $2 || '%'
+        )
+      ORDER BY u.username
+      LIMIT 20;
+    `;
 
-  const result = await pool.query(query, [
-    ownerId,
-    `%${term}%`
-  ]);
-
-  return result.rows;
-}
+    const result = await pool.query(query, [ownerId, term]);
+    return result.rows;
+  }
 
 
-  async enrollMember(ownerId, memberId, relationId) {
+    async reactivateMember(ownerId, memberId) {
     const query = `
       UPDATE users
-      SET parent_id = $1, relation_id = $3
+      SET is_active = TRUE
       WHERE id = $2
-        AND is_active = TRUE
-        AND COALESCE(parent_id, 0) <> $1
+        AND parent_id = $1
+        AND is_active = FALSE
       RETURNING id, username, email;
     `;
-    const result = await pool.query(query, [ownerId, memberId, relationId]);
+    const result = await pool.query(query, [ownerId, memberId]);
     return result.rows[0];
   }
 

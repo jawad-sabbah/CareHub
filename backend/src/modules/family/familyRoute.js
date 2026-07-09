@@ -16,7 +16,8 @@ router.post('/invite-family-member',authMiddleware,isInsuranceOwner,familyContro
 );
 
 
-router.get("/search", authMiddleware, isInsuranceOwner, familyController.searchEligibleMembers);
-router.post("/enroll", authMiddleware, isInsuranceOwner, familyController.enrollMember);
+// Give Insurance: find this owner's inactive dependents, then reactivate one.
+router.get("/search", authMiddleware, isInsuranceOwner, familyController.searchInactiveMembers);
+router.post("/reactivate", authMiddleware, isInsuranceOwner, familyController.reactivateMember);
 
 export default router;

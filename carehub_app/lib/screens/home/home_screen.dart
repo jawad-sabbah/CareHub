@@ -9,7 +9,6 @@ import '../../services/session.dart';
 import '../../core/api_exception.dart';
 import '../../core/date_format.dart';
 import '../family/family_list_screen.dart';
-import '../family/add_family_member_screen.dart';
 import '../centers/medical_centers_list_screen.dart';
 import '../insurance/insurance_history_screen.dart';
 import '../insurance/insurance_details_screen.dart';
@@ -125,7 +124,6 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Text('Hello, $username',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E3FE0))),
         ),
-        const Icon(Icons.notifications_outlined, color: Color(0xFF1E3FE0)),
       ],
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/app_theme.dart';
 import '../../widgets/burst_logo.dart';
-import 'account_choice_screen.dart';
+import 'register_screen.dart';
 import 'sign_in_screen.dart';
 
 /// First screen the user sees. Introduces the product and routes to either
@@ -10,8 +10,10 @@ class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
   void _goToNewAccount(BuildContext context) {
+    // Dependents are seeded with credentials at policy purchase and just
+    // sign in, so "New Account" is now only for owners registering.
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const AccountChoiceScreen()),
+      MaterialPageRoute(builder: (_) => const RegisterScreen()),
     );
   }
 

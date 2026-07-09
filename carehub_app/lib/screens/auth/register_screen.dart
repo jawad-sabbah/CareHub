@@ -97,10 +97,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               authBackButton(context),
               authHeader(
-                brand: 'HealthLink',
+                brand: 'CareHub',
                 title: 'Create Account',
                 subtitle:
-                    'Join HealthLink today and take the first step towards smarter coverage.',
+                    'Join CareHub today and take the first step towards smarter coverage.',
                 titleSize: 20,
                 subtitleSize: 13,
               ),
@@ -185,7 +185,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 12),
               authSecondaryButton(
                 label: 'Sign In',
-                onPressed: () => Navigator.of(context).push(
+                onPressed: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (_) => const SignInScreen()),
                 ),
               ),

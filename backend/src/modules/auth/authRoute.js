@@ -20,10 +20,4 @@ router.post(
 );
 
 
-router.post(
-  '/join-family-member',
-  authController.joinFamilyMember.bind(authController)
-);
-
-
 export default router;

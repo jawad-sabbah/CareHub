@@ -67,24 +67,25 @@ class FamilyController {
     }
   }
 
-  async searchEligibleMembers(req, res) {
+  async searchInactiveMembers(req, res) {
     try {
-      const data = await familyService.searchEligibleMembers(req.user.id, req.query.q || "");
+      const data = await familyService.searchInactiveMembers(req.user.id, req.query.q || "");
       return res.status(200).json({ success: true, message: "Members found", data });
     } catch (error) {
       return res.status(400).json({ success: false, message: error.message });
     }
   }
-
-  async enrollMember(req, res) {
+  
+    async reactivateMember(req, res) {
     try {
-      const { member_id, relation_id } = req.body;
-      const data = await familyService.enrollMember(req.user.id, member_id, relation_id);
-      return res.status(200).json({ success: true, message: "Member added to policy", data });
+      const { member_id } = req.body;
+      const data = await familyService.reactivateMember(req.user.id, member_id);
+      return res.status(200).json({ success: true, message: "Member reactivated", data });
     } catch (error) {
       return res.status(400).json({ success: false, message: error.message });
     }
   }
+
 
 
   async getFamilyMemberCards(req, res) {
