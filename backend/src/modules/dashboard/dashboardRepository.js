@@ -27,7 +27,7 @@ class DashboardRepository {
       ON i.insurance_plan_id = ip.id
     JOIN users u
       ON u.id = $1
-    WHERE i.user_id = COALESCE(u.parent_id, u.id)
+    WHERE i.user_id = u.id
     LIMIT 1;
   `;
 
@@ -87,7 +87,7 @@ class DashboardRepository {
         ip.annual_limit,
         COALESCE(usage.used_amount, 0) AS used_amount
       FROM users u
-      JOIN insurance i        ON i.user_id = COALESCE(u.parent_id, u.id)
+      JOIN insurance i        ON i.user_id = u.id
       JOIN insurance_plan ip  ON i.insurance_plan_id = ip.id
       LEFT JOIN (
         SELECT
@@ -99,7 +99,7 @@ class DashboardRepository {
         JOIN insurance i2               ON i2.user_id = mr.user_id
         JOIN insurance_plan ip2         ON ip2.id = i2.insurance_plan_id
         GROUP BY mr.user_id
-      ) usage ON usage.user_id = COALESCE(u.parent_id, u.id)
+      ) usage ON usage.user_id = u.id
       WHERE u.id = $1
       LIMIT 1;
     `;

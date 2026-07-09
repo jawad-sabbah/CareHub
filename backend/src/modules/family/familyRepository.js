@@ -87,20 +87,28 @@ class FamilyRepository {
 }
 
 
-async searchEligibleMembers(ownerId, term) {
-    const query = `
-      SELECT u.id, u.username, u.email
-      FROM users u
-      WHERE u.is_active = TRUE
-        AND u.id <> $1
-        AND COALESCE(u.parent_id, 0) <> $1
-        AND (u.username ILIKE $2 OR u.email ILIKE $2)
-      ORDER BY u.username
-      LIMIT 10;
-    `;
-    const result = await pool.query(query, [ownerId, `%${term}%`]);
-    return result.rows;
-  }
+ async searchEligibleMembers(ownerId, term) {
+  const query = `
+    SELECT u.id, u.username, u.email
+    FROM users u
+    WHERE
+      u.id <> $1
+      AND (
+        u.username ILIKE $2
+        OR u.email ILIKE $2
+      )
+    ORDER BY u.username
+    LIMIT 10;
+  `;
+
+  const result = await pool.query(query, [
+    ownerId,
+    `%${term}%`
+  ]);
+
+  return result.rows;
+}
+
 
   async enrollMember(ownerId, memberId, relationId) {
     const query = `
@@ -114,8 +122,61 @@ async searchEligibleMembers(ownerId, term) {
     const result = await pool.query(query, [ownerId, memberId, relationId]);
     return result.rows[0];
   }
-            
-                
+
+
+  async attachPrimaryInsurance(memberId, ownerId) {
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+
+      const insertResult = await client.query(
+        `
+        INSERT INTO insurance
+          (user_id, insurance_plan_id, policy_code, provider_name, status, start_date, expiry_date)
+        SELECT
+          $1,
+          own.insurance_plan_id,
+          own.policy_code,
+          own.provider_name,
+          own.status,
+          own.start_date,
+          own.expiry_date
+        FROM (
+          SELECT * FROM insurance
+          WHERE user_id = $2
+          ORDER BY id DESC
+          LIMIT 1
+        ) own
+        WHERE NOT EXISTS (
+          SELECT 1 FROM insurance x WHERE x.user_id = $1
+        )
+        RETURNING *;
+        `,
+        [memberId, ownerId]
+      );
+
+      const insurance = insertResult.rows[0];
+
+      if (insurance) {
+        await client.query(
+          `
+          INSERT INTO insurance_history (insurance_id, action_type, description)
+          VALUES ($1, 'ADDED', 'Dependent added to primary policy');
+          `,
+          [insurance.id]
+        );
+      }
+
+      await client.query("COMMIT");
+      return insurance || null;
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   async getCardByMemberId(memberId)
   {
        const query=`
@@ -124,26 +185,39 @@ async searchEligibleMembers(ownerId, term) {
             u.phone_number,
             u.date_of_birth,
             u.gender,
-             
+
             r.description AS relationship,
-             
+
             i.status,
             p.name,
             i.provider_name,
             i.policy_code,
-            p.coverage_percentage
-
+            p.coverage_percentage,
+            p.annual_limit,
+            COALESCE(usage.used_amount, 0) AS used_amount,
+            p.annual_limit - COALESCE(usage.used_amount, 0) AS remaining_amount
 
         FROM users u
         LEFT JOIN relation r ON u.relation_id = r.id
         LEFT JOIN insurance i ON i.user_id = u.id
         LEFT JOIN insurance_plan p ON i.insurance_plan_id = p.id
+        LEFT JOIN (
+            SELECT
+              mr.user_id,
+              SUM(ms.default_cost * ip2.coverage_percentage / 100) AS used_amount
+            FROM medical_record mr
+            JOIN medical_record_service mrs ON mrs.medical_record_id = mr.id
+            JOIN medical_service ms         ON ms.id = mrs.service_id
+            JOIN insurance i2               ON i2.user_id = mr.user_id
+            JOIN insurance_plan ip2         ON ip2.id = i2.insurance_plan_id
+            GROUP BY mr.user_id
+        ) usage ON usage.user_id = u.id
 
         WHERE u.id = $1;
               `
-      
+
        const result=await pool.query(query,[memberId]);
-       return result.rows[0];       
+       return result.rows[0];
   }
 
 }

@@ -70,7 +70,7 @@ class FamilyService {
     const temporaryPassword = phone_number;
     const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
 
-    return await familyRepository.registerFamilyMember(
+    const newMember = await familyRepository.registerFamilyMember(
       fullName,
       email,
       phone_number,
@@ -80,6 +80,11 @@ class FamilyService {
       ownerId,
       relation_id
     );
+
+    // Give the dependent their own coverage record, copied from the primary.
+    await familyRepository.attachPrimaryInsurance(newMember.id, ownerId);
+
+    return newMember;
   }
 
   async deleteFamilyMember(memberId, userId) {
@@ -97,13 +102,24 @@ class FamilyService {
   };
   }
 
-  async searchEligibleMembers(ownerId, term) {
-    if (!term || term.trim().length < 2) {
-      throw new Error("Search term must be at least 2 characters");
-    }
-    const rows = await familyRepository.searchEligibleMembers(ownerId, term.trim());
-    return rows.map((r) => ({ id: r.id, name: r.username, email: r.email }));
+
+async searchEligibleMembers(ownerId, term) {
+  if (!term || term.trim().length < 1) {
+    throw new Error("Search term is required");
   }
+  
+  const rows = await familyRepository.searchEligibleMembers(
+    ownerId,
+    term.trim()
+  );
+
+  return rows.map((r) => ({
+    id: r.id,
+    name: r.username,
+    email: r.email
+  }));
+}
+
 
   async enrollMember(ownerId, memberId, relationId) {
     if (!memberId || !relationId) {
@@ -113,6 +129,11 @@ class FamilyService {
     if (!enrolled) {
       throw new Error("Member not found or already on a policy");
     }
+
+    // Give the newly enrolled dependent their own coverage record, copied
+    // from the primary (same plan / values), acting as a dependent.
+    await familyRepository.attachPrimaryInsurance(enrolled.id, ownerId);
+
     return { id: enrolled.id, name: enrolled.username, email: enrolled.email };
   }
   
@@ -154,8 +175,9 @@ class FamilyService {
         );
     }
 
-
-    return {
+       console.log("CARD PAYLOAD:", { annualLimit: card.annual_limit, coverage: card.coverage_percentage, used: card.used_amount });
+      
+       return {
 
         memberId: member.id,
 
@@ -181,10 +203,27 @@ class FamilyService {
             card.status || "ACTIVE",
 
 
+        coveragePercentage:
+            Number(card.coverage_percentage) || 0,
+
+
+        annualLimit:
+            Number(card.annual_limit) || 0,
+
+
+        usedAmount:
+            Number(card.used_amount) || 0,
+
+
+        remainingAmount:
+            Number(card.remaining_amount) || 0,
+
+
         cardNumber:
             card.card_number || "",
 
     };
+    
 
 }
 

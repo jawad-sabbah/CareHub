@@ -91,37 +91,7 @@ class _FamilyListScreenState extends State<FamilyListScreen> {
   /// Shows the member how to sign in. Their temporary password is their phone
   /// number (set when the owner registered them); they can also activate via
   /// Join Family using the policy code + the owner's email.
-  void _showSignInAccess(FamilyMember member) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Sign-in access'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${member.name} can sign in to CareHub with:',
-                style: const TextStyle(fontSize: 14)),
-            const SizedBox(height: 14),
-            _accessRow('Email', member.email?.isNotEmpty == true ? member.email! : 'the email you registered'),
-            const SizedBox(height: 8),
-            _accessRow('Temporary password',
-                member.phoneNumber?.isNotEmpty == true ? member.phoneNumber! : 'their phone number'),
-            const SizedBox(height: 14),
-            const Text(
-              'They should change this password after their first sign-in. '
-              'Alternatively they can use "Join Family" with your policy code and email.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Got it')),
-        ],
-      ),
-    );
-  }
-
+  
   Widget _accessRow(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,14 +294,9 @@ return InkWell(
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.grey, size: 20),
                 onSelected: (value) {
-                  if (value == 'access') _showSignInAccess(member);
                   if (value == 'remove') _confirmRemove(member);
                 },
                 itemBuilder: (_) => const [
-                  PopupMenuItem(
-                    value: 'access',
-                    child: Row(children: [Icon(Icons.vpn_key_outlined, size: 18, color: _brandBlue), SizedBox(width: 10), Text('Sign-in access')]),
-                  ),
                   PopupMenuItem(
                     value: 'remove',
                     child: Row(children: [Icon(Icons.person_remove_outlined, size: 18, color: Colors.red), SizedBox(width: 10), Text('Remove')]),

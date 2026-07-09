@@ -9,6 +9,16 @@ import '../../core/api_exception.dart';
 const _brandBlue = Color(0xFF1E3FE0);
 
 
+String _money(double amount){
+    final whole = amount.round().toString();
+    final buf = StringBuffer();
+    for (int i = 0; i < whole.length; i++) {
+      if (i > 0 && (whole.length - i) % 3 == 0) buf.write(",");
+      buf.write(whole[i]);
+    }
+    return "\$${buf.toString()}";
+  }
+  
 class VirtualInsuranceCardScreen extends StatefulWidget {
 
   final int memberId;
@@ -396,6 +406,64 @@ class _VirtualInsuranceCardScreenState
           const SizedBox(height:18),
 
 
+          // ---- Coverage amount block ----
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(.12),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                const Text(
+                  "COVERAGE REMAINING",
+                  style: TextStyle(color: Colors.white70, fontSize:11),
+                ),
+
+                const SizedBox(height:4),
+
+                Text(
+                  _money(c.remainingAmount),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize:24,
+                    fontWeight:FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height:10),
+
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    value: c.annualLimit > 0
+                        ? (c.usedAmount / c.annualLimit).clamp(0.0, 1.0)
+                        : 0.0,
+                    minHeight: 7,
+                    backgroundColor: Colors.white24,
+                    valueColor: const AlwaysStoppedAnimation(Colors.white),
+                  ),
+                ),
+
+                const SizedBox(height:8),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Used ${_money(c.usedAmount)}",
+                      style: const TextStyle(color: Colors.white70, fontSize:12)),
+                    Text("Limit ${_money(c.annualLimit)}",
+                      style: const TextStyle(color: Colors.white70, fontSize:12)),
+                  ],
+                ),
+
+              ],
+            ),
+          ),
+
+
 
           Row(
 
@@ -532,6 +600,12 @@ class _VirtualInsuranceCardScreenState
             c.planName,
           ),
 
+          _row("Coverage", "${c.coveragePercentage.toStringAsFixed(0)}%"),
+          _row("Annual Limit", _money(c.annualLimit)),
+          _row("Used", _money(c.usedAmount)),
+          _row("Remaining", _money(c.remainingAmount)),
+
+          
 
 
         ],

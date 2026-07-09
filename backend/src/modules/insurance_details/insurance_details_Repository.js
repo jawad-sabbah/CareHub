@@ -21,7 +21,7 @@ class insuranceDetailsRepository
         description
       from users
       join insurance
-      on insurance.user_id = COALESCE(users.parent_id, users.id)
+      on insurance.user_id = users.id
       join insurance_plan
       on insurance.insurance_plan_id=insurance_plan.id
       where users.id=$1

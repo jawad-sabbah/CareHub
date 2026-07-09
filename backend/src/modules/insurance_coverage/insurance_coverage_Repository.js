@@ -24,7 +24,7 @@ class InsuranceCoverageRepository
       FROM users u
 
       JOIN insurance i
-        ON i.user_id = COALESCE(u.parent_id, u.id)
+        ON i.user_id = u.id
 
       JOIN insurance_plan ip
         ON i.insurance_plan_id = ip.id
@@ -47,7 +47,7 @@ class InsuranceCoverageRepository
           ON ip2.id = i2.insurance_plan_id
         GROUP BY mr.user_id
       ) usage
-        ON usage.user_id = COALESCE(u.parent_id, u.id)
+        ON usage.user_id = u.id
 
       WHERE u.id = $1
 

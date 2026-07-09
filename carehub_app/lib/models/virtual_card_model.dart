@@ -9,6 +9,11 @@ class VirtualCardModel {
   final String status;
   final String cardNumber;
 
+  final double coveragePercentage;
+  final double annualLimit;
+  final double usedAmount;
+  final double remainingAmount;
+
 
   VirtualCardModel({
     required this.memberId,
@@ -19,10 +24,17 @@ class VirtualCardModel {
     required this.planName,
     required this.status,
     required this.cardNumber,
+    required this.coveragePercentage,
+    required this.annualLimit,
+    required this.usedAmount,
+    required this.remainingAmount,
   });
 
 
   factory VirtualCardModel.fromJson(Map<String,dynamic> json){
+
+    double _toDouble(dynamic v) =>
+        v == null ? 0.0 : (v is num ? v.toDouble() : double.tryParse(v.toString()) ?? 0.0);
 
     return VirtualCardModel(
 
@@ -34,6 +46,11 @@ class VirtualCardModel {
       planName: json["planName"],
       status: json["insuranceStatus"],
       cardNumber: json["cardNumber"],
+
+      coveragePercentage: _toDouble(json["coveragePercentage"]),
+      annualLimit: _toDouble(json["annualLimit"]),
+      usedAmount: _toDouble(json["usedAmount"]),
+      remainingAmount: _toDouble(json["remainingAmount"]),
 
     );
 
